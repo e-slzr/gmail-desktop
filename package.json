@@ -12,13 +12,13 @@
   "main": "src/main.js",
   "scripts": {
     "start": "electron . --no-sandbox",
-    "dist": "electron-builder --linux AppImage deb",
-    "dist:linux": "electron-builder --linux AppImage deb",
-    "dist:win": "electron-builder --win",
-    "dist:win:zip": "electron-builder --win zip",
-    "dist:mac": "electron-builder --mac",
-    "dist:mac:zip": "electron-builder --mac zip",
-    "dist:all": "electron-builder -mwl"
+    "dist": "electron-builder --linux AppImage deb --publish never",
+    "dist:linux": "electron-builder --linux AppImage deb --publish never",
+    "dist:win": "electron-builder --win --publish never",
+    "dist:win:zip": "electron-builder --win zip --publish never",
+    "dist:mac": "electron-builder --mac --publish never",
+    "dist:mac:zip": "electron-builder --mac zip --publish never",
+    "dist:all": "electron-builder -mwl --publish never"
   },
   "keywords": [
     "gmail",
