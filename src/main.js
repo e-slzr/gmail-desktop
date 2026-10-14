@@ -8,6 +8,9 @@ const STATE_FILE = path.join(app.getPath('userData'), 'window-state.json');
 
 app.setName('Gmail');
 app.setAppUserModelId('com.google.GmailDesktop');
+if (process.platform === 'linux' && typeof app.setDesktopName === 'function') {
+  app.setDesktopName('gmail-desktop.desktop');
+}
 
 // Configuración de instancia única
 const gotTheLock = app.requestSingleInstanceLock();
