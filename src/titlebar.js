@@ -1,0 +1,54 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const btnMinimize = document.getElementById('btn-minimize');
+  const btnMaximize = document.getElementById('btn-maximize');
+  const btnClose = document.getElementById('btn-close');
+  const btnReload = document.getElementById('btn-reload');
+  const dragRegion = document.getElementById('drag-region');
+  const unreadBadge = document.getElementById('unread-badge');
+  const windowTitle = document.getElementById('window-title');
+
+  const iconMax = document.getElementById('icon-max');
+  const iconRestore = document.getElementById('icon-restore');
+
+  if (window.electronAPI) {
+    btnMinimize.addEventListener('click', () => window.electronAPI.minimize());
+    btnMaximize.addEventListener('click', () => window.electronAPI.maximize());
+    btnClose.addEventListener('click', () => window.electronAPI.close());
+    btnReload.addEventListener('click', () => window.electronAPI.reload());
+
+    // Doble clic en la zona de arrastre para maximizar o restaurar
+    dragRegion.addEventListener('dblclick', () => window.electronAPI.maximize());
+
+    // Cambiar icono entre maximizar y restaurar
+    window.electronAPI.onMaximizeChange((isMaximized) => {
+      if (isMaximized) {
+        iconMax.style.display = 'none';
+        iconRestore.style.display = 'block';
+        btnMaximize.title = 'Restaurar';
+      } else {
+        iconMax.style.display = 'block';
+        iconRestore.style.display = 'none';
+        btnMaximize.title = 'Maximizar';
+      }
+    });
+
+    // Actualizar insignia de correos no leídos
+    window.electronAPI.onUnreadUpdate((unreadCount) => {
+      if (unreadCount && unreadCount > 0) {
+        unreadBadge.textContent = unreadCount;
+        unreadBadge.style.display = 'inline-block';
+      } else {
+        unreadBadge.style.display = 'none';
+      }
+    });
+
+    // Actualizar título descriptivo en la barra
+    window.electronAPI.onTitleUpdate((title) => {
+      if (title && title !== 'Gmail') {
+        windowTitle.textContent = title;
+      } else {
+        windowTitle.textContent = '';
+      }
+    });
+  }
+});

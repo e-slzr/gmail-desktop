@@ -1,0 +1,40 @@
+{
+  "name": "gmail-desktop",
+  "productName": "Gmail",
+  "version": "1.0.0",
+  "description": "Cliente de escritorio nativo y elegante para Gmail",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron . --no-sandbox",
+    "dist": "electron-builder --linux AppImage deb",
+    "dist:appimage": "electron-builder --linux AppImage",
+    "dist:deb": "electron-builder --linux deb"
+  },
+  "keywords": [
+    "gmail",
+    "desktop",
+    "email",
+    "client"
+  ],
+  "author": "Eliu Salazar",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^44.7.2",
+    "electron-builder": "^26.4.1"
+  },
+  "build": {
+    "appId": "com.google.GmailDesktop",
+    "productName": "Gmail",
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Network;Email",
+      "icon": "assets/icon.png"
+    },
+    "directories": {
+      "output": "dist"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+# Dependencias
+node_modules/
+
+# Empaquetado y compilación
+dist/
+build/
+*.AppImage
+*.deb
+*.rpm
+
+# Logs y temporizadores
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Configuración del editor y sistema
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
