@@ -1,9 +1,13 @@
-const { app, BrowserWindow, WebContentsView, ipcMain, shell, nativeTheme } = require('electron');
+const { app, BrowserWindow, WebContentsView, ipcMain, shell, nativeTheme, Notification } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
 const TITLEBAR_HEIGHT = 44;
 const GMAIL_URL = 'https://mail.google.com/mail/u/0/';
+const STATE_FILE = path.join(app.getPath('userData'), 'window-state.json');
+
+app.setName('Gmail');
+app.setAppUserModelId('com.google.GmailDesktop');
 
 // Configuración de instancia única
 const gotTheLock = app.requestSingleInstanceLock();
@@ -30,6 +34,31 @@ function isGoogleUrl(rawUrl) {
   }
 }
 
+function loadWindowState() {
+  try {
+    if (fs.existsSync(STATE_FILE)) {
+      return JSON.parse(fs.readFileSync(STATE_FILE, 'utf-8'));
+    }
+  } catch {}
+  return { width: 1150, height: 750, isMaximized: false };
+}
+
+function saveWindowState() {
+  if (!mainWindow) return;
+  try {
+    const isMaximized = mainWindow.isMaximized();
+    const bounds = mainWindow.getNormalBounds ? mainWindow.getNormalBounds() : mainWindow.getBounds();
+    const state = {
+      width: bounds.width,
+      height: bounds.height,
+      x: bounds.x,
+      y: bounds.y,
+      isMaximized
+    };
+    fs.writeFileSync(STATE_FILE, JSON.stringify(state));
+  } catch {}
+}
+
 function updateViewBounds() {
   if (!mainWindow || !gmailView) return;
   const [width, height] = mainWindow.getContentSize();
@@ -44,10 +73,13 @@ function updateViewBounds() {
 function createWindow() {
   const isDark = nativeTheme.shouldUseDarkColors;
   const bgColor = isDark ? '#1f1f1f' : '#f6f8fc';
+  const state = loadWindowState();
 
   mainWindow = new BrowserWindow({
-    width: 1150,
-    height: 750,
+    width: state.width || 1150,
+    height: state.height || 750,
+    x: state.x,
+    y: state.y,
     minWidth: 800,
     minHeight: 500,
     frame: false,
@@ -59,6 +91,10 @@ function createWindow() {
       nodeIntegration: false
     }
   });
+
+  if (state.isMaximized) {
+    mainWindow.maximize();
+  }
 
   // Cargar la barra de título personalizada en la ventana principal
   mainWindow.loadFile(path.join(__dirname, 'titlebar.html'));
@@ -74,7 +110,24 @@ function createWindow() {
   });
 
   mainWindow.contentView.addChildView(gmailView);
+
+  // Asegurar que las dimensiones de la vista abarquen toda la ventana de inmediato
   updateViewBounds();
+  setTimeout(updateViewBounds, 50);
+  setTimeout(updateViewBounds, 250);
+
+  // Configurar permisos de sesión (Habilitar notificaciones web para Gmail)
+  const session = gmailView.webContents.session;
+  session.setPermissionRequestHandler((webContents, permission, callback) => {
+    if (permission === 'notifications') {
+      callback(true); // Conceder permiso automáticamente
+    } else {
+      callback(false);
+    }
+  });
+  session.setPermissionCheckHandler((webContents, permission) => {
+    return permission === 'notifications';
+  });
 
   // Limpiar el UserAgent para que Google reconozca el navegador como Chrome estándar
   const defaultUA = gmailView.webContents.userAgent;
@@ -84,14 +137,17 @@ function createWindow() {
   // Cargar Gmail
   gmailView.webContents.loadURL(GMAIL_URL);
 
-  // Manejo de redimensionado de ventana
+  // Manejadores exhaustivos de redimensionado para garantizar que nunca queden huecos
   mainWindow.on('resize', updateViewBounds);
+  mainWindow.on('show', updateViewBounds);
+  mainWindow.on('restore', updateViewBounds);
 
-  // Estados de maximizado para actualizar icono en la barra
   mainWindow.on('maximize', () => {
+    updateViewBounds();
     mainWindow.webContents.send('window-maximize-changed', true);
   });
   mainWindow.on('unmaximize', () => {
+    updateViewBounds();
     mainWindow.webContents.send('window-maximize-changed', false);
   });
 
@@ -125,11 +181,10 @@ function createWindow() {
     mainWindow.webContents.send('update-unread', count);
     mainWindow.webContents.send('update-title', title);
 
-    // Notificación del sistema si entra correo y la ventana no está enfocada
+    // Notificación del sistema si entra correo nuevo y la ventana no está enfocada
     const now = Date.now();
     if (count > lastUnreadCount && (now - lastNotificationTime) > 4000) {
       if (!mainWindow.isFocused() || !mainWindow.isVisible()) {
-        const { Notification } = require('electron');
         if (Notification.isSupported()) {
           const diff = count - lastUnreadCount;
           const msg = diff > 1 ? `Tienes ${diff} nuevos correos en Gmail` : 'Tienes un nuevo correo en Gmail';
@@ -151,8 +206,9 @@ function createWindow() {
     lastUnreadCount = count;
   });
 
-  // Al cerrar la ventana, ocultarla en segundo plano para arranque instantáneo (0ms)
+  // Guardar estado de la ventana periódicamente y al cerrar
   mainWindow.on('close', (event) => {
+    saveWindowState();
     if (!app.isQuitting) {
       event.preventDefault();
       mainWindow.hide();
@@ -176,7 +232,10 @@ ipcMain.on('window-maximize', () => {
 });
 
 ipcMain.on('window-close', () => {
-  if (mainWindow) mainWindow.hide();
+  if (mainWindow) {
+    saveWindowState();
+    mainWindow.hide();
+  }
 });
 
 ipcMain.on('window-reload', () => {
@@ -206,6 +265,7 @@ app.whenReady().then(() => {
 });
 
 app.on('before-quit', () => {
+  saveWindowState();
   app.isQuitting = true;
 });
 
