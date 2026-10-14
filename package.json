@@ -2,21 +2,30 @@
   "name": "gmail-desktop",
   "productName": "Gmail",
   "version": "1.0.0",
-  "description": "Cliente de escritorio nativo y elegante para Gmail",
-  "homepage": "https://github.com/eliusalazar/gmail-desktop",
+  "description": "Cliente de escritorio ligero y elegante para Gmail",
+  "homepage": "https://github.com/e-slzr/gmail-desktop",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/e-slzr/gmail-desktop.git"
+  },
   "author": "Eliu Salazar <eliu.asalazar@gmail.com>",
   "main": "src/main.js",
   "scripts": {
     "start": "electron . --no-sandbox",
     "dist": "electron-builder --linux AppImage deb",
-    "dist:appimage": "electron-builder --linux AppImage",
-    "dist:deb": "electron-builder --linux deb"
+    "dist:linux": "electron-builder --linux AppImage deb",
+    "dist:win": "electron-builder --win",
+    "dist:win:zip": "electron-builder --win zip",
+    "dist:mac": "electron-builder --mac",
+    "dist:mac:zip": "electron-builder --mac zip",
+    "dist:all": "electron-builder -mwl"
   },
   "keywords": [
     "gmail",
     "desktop",
     "email",
-    "client"
+    "client",
+    "electron"
   ],
   "license": "MIT",
   "devDependencies": {
@@ -24,7 +33,7 @@
     "electron-builder": "^26.4.1"
   },
   "build": {
-    "appId": "com.google.GmailDesktop",
+    "appId": "com.eslzr.gmail-desktop",
     "productName": "Gmail",
     "linux": {
       "target": [
@@ -34,6 +43,22 @@
       "maintainer": "Eliu Salazar <eliu.asalazar@gmail.com>",
       "category": "Network;Email",
       "icon": "assets/icon.png"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "zip"
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.productivity",
+      "icon": "assets/icon.icns",
+      "identity": null
     },
     "directories": {
       "output": "dist"

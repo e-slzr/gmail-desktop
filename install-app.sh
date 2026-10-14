@@ -40,7 +40,7 @@ done
 cat <<EOF > "$APP_DIR/gmail-desktop.desktop"
 [Desktop Entry]
 Name=Gmail
-Comment=Cliente de escritorio oficial de Gmail
+Comment=Cliente de escritorio para Gmail
 GenericName=Cliente de correo
 Exec=$BIN_DIR/gmail-desktop %u
 Icon=$ICON_DIR/512x512/apps/gmail-desktop.png

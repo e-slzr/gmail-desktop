@@ -1,23 +1,40 @@
-# Gmail Desktop (v1.0.0)
+# Gmail Desktop
 
-Cliente de escritorio nativo, ligero y elegante para Gmail, diseñado especialmente para **elementary OS (Pantheon)** y entornos Linux modernos sobre Wayland y X11.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/badge/Release-v1.0.0-green.svg)](https://github.com/e-slzr/gmail-desktop/releases)
+[![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows%20%7C%20macOS-lightgrey.svg)](https://github.com/e-slzr/gmail-desktop)
 
-![Gmail Desktop](assets/icon.png)
+Cliente de escritorio independiente, ligero y elegante para Gmail, diseñado para ofrecer una experiencia limpia y nativa sin pestañas de navegador innecesarias.
 
-## Características principales
+<p align="center">
+  <img src="assets/icon.png" width="128" height="128" alt="Gmail Desktop Icon" />
+</p>
 
-- **Barra de título con diseño oficial de Google:** Estilizada siguiendo la guía de diseño Google Material Design 3 (`#1f1f1f` en modo oscuro / `#f6f8fc` en modo claro).
-- **Controles de ventana integrados:** Botones discretos y circulares de recargar, minimizar, maximizar/restaurar y cerrar con efectos suaves de iluminación.
-- **Zona de arrastre completa:** Permite mover la ventana tomándola de cualquier parte de la barra superior, con soporte para doble clic para maximizar o restaurar.
-- **Insignia dinámica de correos no leídos:** Insignia roja que muestra el número exacto de correos no leídos en tiempo real.
-- **Rendimiento optimizado con Chromium (Electron):**
-  - Consumo de RAM reducido en más del **65%** respecto a WebKitGTK (~450 MB vs 1.7 GB).
-  - Uso de CPU del **0% al 1%** en reposo.
-  - Sin parpadeos ni oscurecimientos de ventana en Wayland y tarjetas NVIDIA.
-- **Compatibilidad con pantallas Ultrawide y 4K:** Sincronización continua de dimensiones entre Wayland y la vista web.
-- **Notificaciones de escritorio nativas:** Integración directa con las notificaciones de elementary OS (`libnotify`) con clic para enfocar la app.
-- **Enlaces externos protegidos:** Cualquier enlace de terceros contenido en un correo se abre automáticamente en tu navegador web predeterminado.
-- **Instancia única vía D-Bus:** Al abrir la aplicación desde el menú o Dock mientras ya está en ejecución, se restaura al instante en 0 ms sin duplicar procesos.
+---
+
+## Características
+
+- **Diseño Google Material Design 3:** Barra de título minimalista con adaptación automática al tema del sistema (modo oscuro `#1f1f1f` y modo claro `#f6f8fc`).
+- **Controles de ventana integrados:** Botones discretos de recarga, minimizar, maximizar y cerrar con transiciones suaves.
+- **Zona de arrastre completa:** Movimiento fluido de la ventana y soporte para doble clic para maximizar o restaurar.
+- **Contador de correos no leídos:** Insignia dinámica que refleja el número exacto de mensajes pendientes en tiempo real.
+- **Notificaciones de escritorio nativas:** Alertas del sistema cuando llegan nuevos correos, con clic para enfocar la aplicación.
+- **Navegación externa segura:** Los enlaces de terceros incluidos en los correos se abren directamente en tu navegador predeterminado.
+- **Instancia única:** Si la aplicación ya está abierta, hacer clic en el acceso directo o abrir un correo la trae al frente al instante.
+- **Bajo consumo de recursos:** Optimizado para operar con mínima sobrecarga de memoria y CPU en reposo.
+
+---
+
+## Descargas (v1.0.0)
+
+Los paquetes compilados listos para usar se encuentran en la sección de [Releases](https://github.com/e-slzr/gmail-desktop/releases) o en la carpeta `dist/`:
+
+| Plataforma | Formato | Descripción |
+|---|---|---|
+| **Linux** | `.AppImage` | Ejecutable portable universal (funciona en cualquier distro). |
+| **Linux** | `.deb` | Instalador nativo para Ubuntu, Debian, elementary OS, Mint. |
+| **Windows** | `.exe` | Instalador estándar con asistente (NSIS). |
+| **macOS** | `.dmg` / `.zip` | Imagen de disco e instalador empaquetado para macOS. |
 
 ---
 
@@ -25,50 +42,66 @@ Cliente de escritorio nativo, ligero y elegante para Gmail, diseñado especialme
 
 | Atajo | Acción |
 |---|---|
-| `Ctrl + Q` | Cerrar completamente la aplicación |
-| `Ctrl + W` | Ocultar ventana en segundo plano |
+| `Ctrl + Q` / `Cmd + Q` | Cerrar completamente la aplicación |
+| `Ctrl + W` / `Cmd + W` | Ocultar ventana en segundo plano |
 | `Ctrl + R` / `F5` | Recargar bandeja de entrada |
 | Doble clic en barra | Maximizar / Restaurar tamaño |
 
 ---
 
-## Instaladores disponibles para compartir
+## Instalación rápida en Linux (elementary OS / Ubuntu)
 
-Los paquetes compilados listos para distribuir se encuentran en la carpeta `dist/`:
-
-- **`Gmail-1.0.0.AppImage` (120 MB):** Paquete ejecutable portable universal. Funciona en cualquier distribución Linux (Ubuntu, elementary OS, Fedora, Arch, etc.) con doble clic.
-- **`gmail-desktop_1.0.0_amd64.deb` (95 MB):** Paquete instalable nativo Debian/Ubuntu/elementary OS.
-  ```bash
-  sudo dpkg -i dist/gmail-desktop_1.0.0_amd64.deb
-  ```
-
----
-
-## Instalación local en elementary OS
-
-Si deseas instalar la versión compilada directamente en tu usuario (sin requerir permisos de `sudo`):
+Para integrar la versión de Linux directamente en el menú de aplicaciones y el Dock del sistema:
 
 ```bash
 ./install-app.sh
 ```
 
-Esto registrará `Gmail` en el menú de aplicaciones de elementary OS (Slingshot) con su icono oficial en alta resolución y listo para anclarse al Dock (Plank).
-
 ---
 
 ## Desarrollo y Compilación
 
-### Requisitos
-- Node.js (v20 o v22 LTS)
+### Requisitos previos
+- [Node.js](https://nodejs.org/) (versión 20 o superior)
 - npm
 
-### Ejecutar en modo desarrollo
+### Pasos
 ```bash
+# Clonar el repositorio
+git clone https://github.com/e-slzr/gmail-desktop.git
+cd gmail-desktop
+
+# Instalar dependencias
+npm install
+
+# Iniciar en modo desarrollo
 npm start
+
+# Compilar instaladores según la plataforma
+npm run dist:linux    # AppImage y .deb
+npm run dist:win      # Instalador Windows (.exe)
+npm run dist:mac      # macOS (.dmg y .zip)
+npm run dist:all      # Todas las plataformas soportadas
 ```
 
-### Generar nuevos paquetes / releases
-```bash
-npm run dist
-```
-Los archivos generados se guardarán en la carpeta `dist/`.
+---
+
+## Autor
+
+**Eliu Salazar**  
+- GitHub: [@e-slzr](https://github.com/e-slzr)  
+- Contacto: [eliu.asalazar@gmail.com](mailto:eliu.asalazar@gmail.com)
+
+---
+
+## Licencia
+
+Este proyecto está bajo la Licencia **MIT**. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+
+---
+
+## Aviso de Marcas y Exención de Responsabilidad (Disclaimer)
+
+**Gmail™** y el logotipo de Gmail son marcas registradas de **Google LLC**.
+
+Este proyecto es un cliente de escritorio independiente de código abierto y **no está afiliado, patrocinado, respaldado ni autorizado oficialmente por Google LLC** ni por ninguna de sus filiales. Todos los nombres comerciales, marcas comerciales y logotipos son propiedad de sus respectivos dueños y se utilizan aquí únicamente con fines de identificación y compatibilidad.

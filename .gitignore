@@ -7,6 +7,10 @@ build/
 *.AppImage
 *.deb
 *.rpm
+*.exe
+*.dmg
+*.zip
+*.blockmap
 
 # Logs y temporizadores
 npm-debug.log*

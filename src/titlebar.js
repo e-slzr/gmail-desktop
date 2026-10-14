@@ -16,10 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
     btnClose.addEventListener('click', () => window.electronAPI.close());
     btnReload.addEventListener('click', () => window.electronAPI.reload());
 
-    // Doble clic en la zona de arrastre para maximizar o restaurar
+    // Double click to toggle maximize
     dragRegion.addEventListener('dblclick', () => window.electronAPI.maximize());
 
-    // Cambiar icono entre maximizar y restaurar
+    // Toggle maximize/restore icon
     window.electronAPI.onMaximizeChange((isMaximized) => {
       if (isMaximized) {
         iconMax.style.display = 'none';
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Actualizar insignia de correos no leídos
+    // Unread badge
     window.electronAPI.onUnreadUpdate((unreadCount) => {
       if (unreadCount && unreadCount > 0) {
         unreadBadge.textContent = unreadCount;
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Actualizar título descriptivo en la barra
+    // Window title
     window.electronAPI.onTitleUpdate((title) => {
       if (title && title !== 'Gmail') {
         windowTitle.textContent = title;
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Sincronización continua de dimensiones de ventana con Wayland / Compositor
+    // View bounds sync
     function syncWindowDimensions() {
       if (window.electronAPI && window.electronAPI.sendResize) {
         window.electronAPI.sendResize(window.innerWidth, window.innerHeight);

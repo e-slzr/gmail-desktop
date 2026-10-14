@@ -138,7 +138,7 @@ body {
   background-color: var(--btn-active);
 }
 
-/* Botón cerrar con estilo suave rojo de Google */
+/* Close button */
 .ctrl-btn.close-btn:hover {
   background-color: var(--close-hover);
   color: #ffffff;

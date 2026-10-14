@@ -7,12 +7,12 @@ const GMAIL_URL = 'https://mail.google.com/mail/u/0/';
 const STATE_FILE = path.join(app.getPath('userData'), 'window-state.json');
 
 app.setName('Gmail');
-app.setAppUserModelId('com.google.GmailDesktop');
+app.setAppUserModelId('com.eslzr.gmail-desktop');
 if (process.platform === 'linux' && typeof app.setDesktopName === 'function') {
   app.setDesktopName('gmail-desktop.desktop');
 }
 
-// Configuración de instancia única
+// Single instance lock
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   app.quit();
@@ -114,16 +114,16 @@ function createWindow() {
 
   mainWindow.contentView.addChildView(gmailView);
 
-  // Asegurar que las dimensiones de la vista abarquen toda la ventana de inmediato
+  // Sincronizar dimensiones iniciales de la vista
   updateViewBounds();
   setTimeout(updateViewBounds, 50);
   setTimeout(updateViewBounds, 250);
 
-  // Configurar permisos de sesión (Habilitar notificaciones web para Gmail)
+  // Permisos de notificaciones
   const session = gmailView.webContents.session;
   session.setPermissionRequestHandler((webContents, permission, callback) => {
     if (permission === 'notifications') {
-      callback(true); // Conceder permiso automáticamente
+      callback(true);
     } else {
       callback(false);
     }
@@ -132,15 +132,13 @@ function createWindow() {
     return permission === 'notifications';
   });
 
-  // Limpiar el UserAgent para que Google reconozca el navegador como Chrome estándar
+  // Limpiar UserAgent para compatibilidad de inicio de sesion de Google
   const defaultUA = gmailView.webContents.userAgent;
   const cleanUA = defaultUA.replace(/Electron\/[0-9\.]+\s?/, '').replace(/gmail-desktop\/[0-9\.]+\s?/, '');
   gmailView.webContents.setUserAgent(cleanUA);
 
-  // Cargar Gmail
   gmailView.webContents.loadURL(GMAIL_URL);
 
-  // Manejadores exhaustivos de redimensionado para garantizar que nunca queden huecos
   mainWindow.on('resize', updateViewBounds);
   mainWindow.on('show', updateViewBounds);
   mainWindow.on('restore', updateViewBounds);
@@ -154,18 +152,16 @@ function createWindow() {
     mainWindow.webContents.send('window-maximize-changed', false);
   });
 
-  // Interceptar apertura de ventanas (links en correos)
+  // Links
   gmailView.webContents.setWindowOpenHandler(({ url }) => {
     if (isGoogleUrl(url)) {
       gmailView.webContents.loadURL(url);
       return { action: 'deny' };
     }
-    // Enlaces externos a sitios de terceros se abren en el navegador predeterminado
     shell.openExternal(url);
     return { action: 'deny' };
   });
 
-  // Interceptar navegación directa a páginas externas
   gmailView.webContents.on('will-navigate', (event, url) => {
     if (!isGoogleUrl(url)) {
       event.preventDefault();
@@ -173,18 +169,16 @@ function createWindow() {
     }
   });
 
-  // Monitoreo de título y contador de correos no leídos
+  // Title and unread notifications
   gmailView.webContents.on('page-title-updated', (_event, title) => {
     mainWindow.setTitle(title || 'Gmail');
 
     const match = title.match(/\(([\d,]+)\)/);
     const count = match ? parseInt(match[1].replace(',', ''), 10) : 0;
 
-    // Actualizar insignia en la barra de título
     mainWindow.webContents.send('update-unread', count);
     mainWindow.webContents.send('update-title', title);
 
-    // Notificación del sistema si entra correo nuevo y la ventana no está enfocada
     const now = Date.now();
     if (count > lastUnreadCount && (now - lastNotificationTime) > 4000) {
       if (!mainWindow.isFocused() || !mainWindow.isVisible()) {
@@ -209,7 +203,6 @@ function createWindow() {
     lastUnreadCount = count;
   });
 
-  // Guardar estado de la ventana periódicamente y al cerrar
   mainWindow.on('close', (event) => {
     saveWindowState();
     if (!app.isQuitting) {
@@ -219,7 +212,7 @@ function createWindow() {
   });
 }
 
-// IPC Handlers para los botones de la barra de título
+// Window control IPC
 ipcMain.on('window-minimize', () => {
   if (mainWindow) mainWindow.minimize();
 });
@@ -256,7 +249,7 @@ ipcMain.on('window-resized', (_event, { width, height }) => {
   }
 });
 
-// Despertar la ventana existente si el usuario intenta abrir otra instancia
+// Single instance lock
 app.on('second-instance', () => {
   if (mainWindow) {
     if (mainWindow.isMinimized()) mainWindow.restore();
