@@ -242,6 +242,17 @@ ipcMain.on('window-reload', () => {
   if (gmailView) gmailView.webContents.reload();
 });
 
+ipcMain.on('window-resized', (_event, { width, height }) => {
+  if (gmailView) {
+    gmailView.setBounds({
+      x: 0,
+      y: TITLEBAR_HEIGHT,
+      width: width,
+      height: Math.max(0, height - TITLEBAR_HEIGHT)
+    });
+  }
+});
+
 // Despertar la ventana existente si el usuario intenta abrir otra instancia
 app.on('second-instance', () => {
   if (mainWindow) {

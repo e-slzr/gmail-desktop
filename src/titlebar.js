@@ -50,5 +50,17 @@ document.addEventListener('DOMContentLoaded', () => {
         windowTitle.textContent = '';
       }
     });
+
+    // Sincronización continua de dimensiones de ventana con Wayland / Compositor
+    function syncWindowDimensions() {
+      if (window.electronAPI && window.electronAPI.sendResize) {
+        window.electronAPI.sendResize(window.innerWidth, window.innerHeight);
+      }
+    }
+    window.addEventListener('resize', syncWindowDimensions);
+    syncWindowDimensions();
+    setTimeout(syncWindowDimensions, 50);
+    setTimeout(syncWindowDimensions, 200);
+    setTimeout(syncWindowDimensions, 500);
   }
 });

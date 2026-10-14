@@ -16,5 +16,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   onTitleUpdate: (callback) => {
     ipcRenderer.on('update-title', (_event, title) => callback(title));
-  }
+  },
+
+  sendResize: (w, h) => ipcRenderer.send('window-resized', { width: w, height: h })
 });
