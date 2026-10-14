@@ -3,6 +3,8 @@
   "productName": "Gmail",
   "version": "1.0.0",
   "description": "Cliente de escritorio nativo y elegante para Gmail",
+  "homepage": "https://github.com/eliusalazar/gmail-desktop",
+  "author": "Eliu Salazar <eliu.asalazar@gmail.com>",
   "main": "src/main.js",
   "scripts": {
     "start": "electron . --no-sandbox",
@@ -16,7 +18,6 @@
     "email",
     "client"
   ],
-  "author": "Eliu Salazar",
   "license": "MIT",
   "devDependencies": {
     "electron": "^44.7.2",
@@ -30,6 +31,7 @@
         "AppImage",
         "deb"
       ],
+      "maintainer": "Eliu Salazar <eliu.asalazar@gmail.com>",
       "category": "Network;Email",
       "icon": "assets/icon.png"
     },
