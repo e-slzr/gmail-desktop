@@ -8,6 +8,10 @@ APP_DIR="$HOME/.local/share/applications"
 ICON_DIR="$HOME/.local/share/icons/hicolor/scalable/apps"
 ICON_PNG_DIR="$HOME/.local/share/icons/hicolor/512x512/apps"
 
+# Limpiar instalaciones previas para evitar sobrescribir con enlaces recursivos
+rm -rf "$INSTALL_DIR"
+rm -f "$BIN_DIR/gmail-desktop"
+
 mkdir -p "$INSTALL_DIR"
 mkdir -p "$BIN_DIR"
 mkdir -p "$APP_DIR"
@@ -16,8 +20,9 @@ mkdir -p "$ICON_PNG_DIR"
 
 # Copiar el binario compilado listo para producción
 cp -r "$SCRIPT_DIR/dist/linux-unpacked/"* "$INSTALL_DIR/"
+chmod +x "$INSTALL_DIR/gmail-desktop"
 
-# Crear script ejecutable en PATH
+# Crear script ejecutable seguro en PATH
 cat << 'EOF' > "$BIN_DIR/gmail-desktop"
 #!/bin/sh
 exec "$HOME/.local/lib/gmail-desktop/gmail-desktop" --no-sandbox "$@"
@@ -28,13 +33,13 @@ chmod +x "$BIN_DIR/gmail-desktop"
 cp "$SCRIPT_DIR/assets/icon.svg" "$ICON_DIR/gmail-desktop.svg"
 cp "$SCRIPT_DIR/assets/icon.png" "$ICON_PNG_DIR/gmail-desktop.png"
 
-# Crear archivo .desktop oficial del sistema
+# Crear archivo .desktop oficial del sistema apuntando al lanzador seguro
 cat <<EOF > "$APP_DIR/gmail-desktop.desktop"
 [Desktop Entry]
 Name=Gmail
 Comment=Cliente de escritorio oficial de Gmail
 GenericName=Cliente de correo
-Exec=$INSTALL_DIR/gmail-desktop --no-sandbox %u
+Exec=$BIN_DIR/gmail-desktop %u
 Icon=gmail-desktop
 Terminal=false
 Type=Application
