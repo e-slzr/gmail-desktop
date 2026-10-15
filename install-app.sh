@@ -43,7 +43,7 @@ Name=Gmail
 Comment=Cliente de escritorio para Gmail
 GenericName=Cliente de correo
 Exec=$BIN_DIR/gmail-desktop %u
-Icon=$ICON_DIR/512x512/apps/gmail-desktop.png
+Icon=gmail-desktop
 Terminal=false
 Type=Application
 Categories=Network;Email;Office;
@@ -63,4 +63,4 @@ if command -v gtk-update-icon-cache >/dev/null 2>&1; then
     gtk-update-icon-cache -f -t "$ICON_DIR" 2>/dev/null || true
 fi
 
-echo "¡Gmail Desktop v1.0.0 instalado con iconos sincronizados para Plank y Ulauncher!"
+echo "¡Gmail Desktop v1.0.1 instalado con iconos sincronizados para Plank y Ulauncher!"

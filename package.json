@@ -1,7 +1,7 @@
 {
   "name": "gmail-desktop",
   "productName": "Gmail",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cliente de escritorio ligero y elegante para Gmail",
   "homepage": "https://github.com/e-slzr/gmail-desktop",
   "repository": {
@@ -62,6 +62,9 @@
     },
     "directories": {
       "output": "dist"
-    }
+    },
+    "asarUnpack": [
+      "assets/**/*"
+    ]
   }
 }
